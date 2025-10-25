@@ -1,4 +1,4 @@
-name: Build Python Gesture APK (OpenCV + Mediapipe + Pygame)
+name: Build APK (Python + Mediapipe + OpenCV + Pygame)
 
 on:
   push:
@@ -7,51 +7,40 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-env:
-  PYTHON_VERSION: "3.10"
-
 jobs:
   build-apk:
-    name: Build APK using Buildozer
     runs-on: ubuntu-latest
-
     steps:
-      - name: 🧾 Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: 🐍 Setup Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: 3.10
 
-      - name: ⚙️ Install system dependencies
+      - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip libffi-dev libssl-dev \
-            libsqlite3-dev zlib1g-dev libjpeg-dev libpng-dev libusb-1.0-0-dev \
-            libtiff-dev libgles2-mesa-dev libgl1-mesa-dev
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip build-essential \
+            libffi-dev libssl-dev libsqlite3-dev zlib1g-dev libjpeg-dev libpng-dev \
+            libusb-1.0-0-dev libtiff-dev libgles2-mesa-dev libgl1-mesa-dev
 
-      - name: 📦 Install Buildozer & Dependencies
+      - name: Install Python packages
         run: |
-          python -m pip install --upgrade pip Cython
+          pip install --upgrade pip Cython
           pip install buildozer opencv-python mediapipe pygame
 
-      - name: 📂 Initialize Buildozer if missing
-        run: |
-          if [ ! -f "buildozer.spec" ]; then
-            buildozer init
-          fi
-
-      - name: ☑️ Accept Android SDK Licenses
+      - name: Accept Android SDK licenses
         run: |
           yes | sdkmanager --licenses || true
 
-      - name: 📲 Build APK (Android)
+      - name: Build APK
         run: |
           buildozer -v android debug
 
-      - name: 📤 Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: python-gesture-apk
+          name: gesture-control-apk
           path: bin/*.apk
