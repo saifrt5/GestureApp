@@ -1,3 +1,9 @@
+- name: Install dependencies
+  run: |
+    sudo apt update
+    sudo apt install -y libgl1
+    pip install opencv-python mediapipe pygame
+
 name: All Builds (Linux, macOS, Windows, Android, IPA, APK, AAB)
 
 on:
@@ -16,10 +22,9 @@ on:
   workflow_dispatch:
 
 env:
-  # https://flet.dev/docs/publish#versioning
   BUILD_NUMBER: 1
   BUILD_VERSION: 1.0.0
-  PYTHON_VERSION: 3.12.2
+  PYTHON_VERSION: 3.10
   FLUTTER_VERSION: 3.22.2
 
 jobs:
