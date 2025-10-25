@@ -36,13 +36,17 @@ jobs:
           python -m pip install --upgrade pip Cython
           pip install buildozer opencv-python mediapipe pygame
 
-      - name: 🧰 Initialize Buildozer if missing
+      - name: 📂 Initialize Buildozer if missing
         run: |
           if [ ! -f "buildozer.spec" ]; then
             buildozer init
           fi
 
-      - name: 🛠️ Build APK
+      - name: ☑️ Accept Android SDK Licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
+      - name: 📲 Build APK (Android)
         run: |
           buildozer -v android debug
 
